@@ -1,7 +1,9 @@
 import * as React from 'react'
 import styled from "styled-components/native";
+import CategoriesMessage from "../components/CategoriesMessage";
 
 export default function Messages(){
+
     return(
         <Background>
             <Header>
@@ -10,6 +12,7 @@ export default function Messages(){
                     <SearchButtonImage source={require('../assets/search-icon.png')}/>
                 </SearchButton>
             </Header>
+            <CategoriesMessage />
             <AddCategory>
                 <AddCategoryImage source={require('../assets/add-category-icon.png')}/>
             </AddCategory>
