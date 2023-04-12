@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {FlatList, Text, View} from "react-native";
+import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import styled from "styled-components/native";
 import {StyleSheet} from "react-native";
 
@@ -19,17 +19,19 @@ export default function CategoriesMessage() {
 
     const RenderItem = ({item}: {item: Category}) => {
         return(
-            <View>
-                {selected === item.id ?
-                    <CategoryDefault style={{backgroundColor: "#2F80ED"}}>
-                        <Text style={{color: "white"}}>{item.text}</Text>
-                    </CategoryDefault>
-                    :
-                    <CategoryDefault>
-                        <Text>{item.text}</Text>
-                    </CategoryDefault>
-                }
-            </View>
+            <TouchableOpacity onPress={() => setSelected(item.id)}>
+                <View>
+                    {selected === item.id ?
+                        <CategoryDefault style={{backgroundColor: "#2F80ED"}}>
+                            <Text style={{color: "white"}}>{item.text}</Text>
+                        </CategoryDefault>
+                        :
+                        <CategoryDefault>
+                            <Text>{item.text}</Text>
+                        </CategoryDefault>
+                    }
+                </View>
+            </TouchableOpacity>
         )
     }
 

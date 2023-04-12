@@ -1,29 +1,34 @@
 import * as React from "react";
 import styled from "styled-components/native";
 
-export default function BottomNavbar({stage, setStage}: {stage: string, setStage: any}) {
+export default function BottomNavbar({stage, navigation}: {stage: string, navigation: any}) {
+
+    const setStage = (value: string) => {
+        navigation.navigate(value)
+    }
+
     return(
         <BackGround>
-            <NavButton onPress={() => setStage('messages')}>
-                {stage === 'messages' ?
+            <NavButton onPress={() => setStage('Messages')}>
+                {stage === 'Messages' ?
                     <NavImage source={require('../assets/message_blue.png')}/> :
                     <NavImage source={require('../assets/message_gray.png')}/>
                 }
             </NavButton>
-            <NavButton onPress={() => setStage('clock')}>
-                {stage === 'clock' ?
+            <NavButton onPress={() => setStage('Clock')}>
+                {stage === 'Clock' ?
                     <NavImage source={require('../assets/clock_blue.png')}/> :
                     <NavImage source={require('../assets/clock_gray.png')}/>
                 }
             </NavButton>
-            <NavButton onPress={() => setStage('phone')}>
-                {stage === 'phone' ?
+            <NavButton onPress={() => setStage('Phone')}>
+                {stage === 'Phone' ?
                     <NavImage source={require('../assets/phone_blue.png')}/> :
                     <NavImage source={require('../assets/phone_gray.png')}/>
                 }
             </NavButton>
-            <NavButton onPress={() => setStage('profile')}>
-                {stage === 'profile' ?
+            <NavButton onPress={() => setStage('Profile')}>
+                {stage === 'Profile' ?
                     <NavImage source={require('../assets/profile_blue.png')}/> :
                     <NavImage source={require('../assets/profile_gray.png')}/>
                 }
@@ -43,6 +48,7 @@ const BackGround = styled.View`
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+    z-index: 100;
 `;
 
 const NavButton = styled.TouchableOpacity`
