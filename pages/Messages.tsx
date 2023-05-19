@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 // @ts-ignore
-import { REACT_APP_SERVER_IP } from "@env"
+import { REACT_APP_SERVER_IP, REACT_WEBSOCKET } from "@env"
 import { LastChat } from "../models/LastChat";
 
 
@@ -17,6 +17,7 @@ export default function Messages({ navigation }: {navigation: any}){
     const [chats, setChats] = React.useState<LastChat[]>([])
 
     const [token, setToken] = React.useState<string | null>('');
+    const [ws, setWs] = React.useState<WebSocket>()
 
     React.useEffect(() => {
         const getToken = async () => {
@@ -31,6 +32,7 @@ export default function Messages({ navigation }: {navigation: any}){
         if (token == null || token == '') {
             return;
         }
+        let user_id: number;
         const getChats = async () => {
             try {
                 const promise = axios({
@@ -39,6 +41,7 @@ export default function Messages({ navigation }: {navigation: any}){
                     headers: {Authorization: `Bearer ${token}`}
                 })
                 promise.then(res => {
+                    user_id = res.data.user_id
                     setChats(res.data.user_last_messages)
                 })
             } catch (error) {
@@ -46,7 +49,29 @@ export default function Messages({ navigation }: {navigation: any}){
             }
         };
         getChats()
+        let ws = new WebSocket(`${REACT_APP_SERVER_IP}/ws`);
+        ws.onopen = () => {
+            console.log('1234')
+            ws.send(JSON.stringify({'user_id': user_id}))
+        }
+        setWs(ws)
     }, [token])
+
+    React.useEffect(() => {
+        if(typeof ws === "undefined"){
+            return
+        }
+        ws.onmessage = (e: any) => {
+            const data = JSON.parse(e.data)
+            let newChats = [...chats]
+            let index = newChats.findIndex((e) => e.user.ID === data.sender_id)
+            newChats[index].message = data
+            let chat = {...newChats[index]}
+            newChats.splice(index, 1)
+            newChats.unshift(chat)
+            setChats([...newChats])
+        }
+    }, [chats])
 
     const MessageItem = ({item}: {item: LastChat}) => {
 
@@ -64,6 +89,7 @@ export default function Messages({ navigation }: {navigation: any}){
 
     return(
         <View>
+            <StatusBar/>
             <Background>
                 <Header>
                     <RecentImagesTitle>Сообщения</RecentImagesTitle>

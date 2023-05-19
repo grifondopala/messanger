@@ -1,17 +1,35 @@
 import * as React from 'react'
 import styled from "styled-components/native";
 import BottomNavbar from "../components/BottomNavbar";
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
 import {User} from "../models/User";
 // @ts-ignore
 import { REACT_APP_SERVER_IP } from "@env"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Search({ navigation }: {navigation: any}){
 
     const [foundData, setFoundData] = React.useState<User[]>([])
 
     const [search, setSearch] = React.useState("")
+    const [token, setToken] = React.useState<string | null>("")
+
+    React.useEffect(() => {
+        const getToken = async () => {
+            try {
+                const value = await AsyncStorage.getItem('token');
+                setToken(value);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getToken();
+        if (token == null || token == '') {
+            return;
+        }
+    }, [token])
+
 
     const FoundList = () => {
 
@@ -32,8 +50,21 @@ export default function Search({ navigation }: {navigation: any}){
     }
 
     const FoundUserItem = ({ item }: {item : User}) => {
+
+        const GoToChat = () => {
+            const promise = axios({
+                method: 'post',
+                url: `${REACT_APP_SERVER_IP}/chats/create`,
+                data: {user_id: item.ID},
+                headers: {Authorization: `Bearer ${token}`},
+            })
+            promise.then((res) =>{
+                navigation.navigate('Chat', { chat: res.data.chat, user: item })
+            })
+        }
+
         return(
-            <UserView>
+            <UserView onPress={GoToChat}>
                 <UserImage source={{uri: `${REACT_APP_SERVER_IP}/static/${item.image_src}`}}/>
                 <MessageInformation>
                     <UserName>{item.first_name} {item.last_name}</UserName>
@@ -129,7 +160,7 @@ const EmptyView = styled.View`
   justify-content: center;
 `;
 
-const UserView = styled.View`
+const UserView = styled.TouchableOpacity`
   width: 100%;
   height: 60px;
   background-color: white;

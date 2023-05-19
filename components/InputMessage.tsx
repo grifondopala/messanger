@@ -3,10 +3,10 @@ import styled from "styled-components/native";
 import axios from "axios";
 
 // @ts-ignore
-import { REACT_APP_SERVER_IP } from "@env"
+import { REACT_APP_SERVER_IP, REACT_WEBSOCKET } from "@env"
 import {Message} from "../models/Message";
 
-export function InputMessage({userId, chatId, setMessages}: {userId: number, chatId: number, setMessages: any}){
+export function InputMessage({userId, chatId, setMessages, companionId}: {userId: number, chatId: number, setMessages: any, companionId: number}){
 
     const [text, setText] = React.useState('')
 
@@ -20,6 +20,11 @@ export function InputMessage({userId, chatId, setMessages}: {userId: number, cha
         promise.then((res: any) => {
             setMessages((value: Message[]) => [...value, res.data.message])
             setText('')
+            var ws = new WebSocket(`${REACT_APP_SERVER_IP}/ws/sendMessage`);
+            ws.onopen = () => {
+                //ws.send(JSON.stringify({user_id: companionId, sender_id: userId, text}))
+                ws.send(JSON.stringify({user_id: companionId, message: res.data.message}))
+            }
         })
     }
 

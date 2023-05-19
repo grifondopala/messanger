@@ -7,6 +7,7 @@ import { User } from "../models/User";
 
 export function UserNavbar({navigation ,user}: {navigation: any, user: User}){
 
+
     return(
         <BackGround>
             <BackButton onPress={() => navigation.goBack()}>

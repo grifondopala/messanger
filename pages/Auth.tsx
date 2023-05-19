@@ -35,7 +35,7 @@ export default function Auth( { navigation }: {navigation: any}) {
             console.log('Auth:', token)
             navigation.navigate('Messages')
         }).catch((e) => {
-            console.log(e)
+            console.log(e.text)
         })
     }, [token])
 
@@ -108,11 +108,11 @@ const SignUp = ({changeStage}: {changeStage: any}) => {
         const promise = axios({
             method: 'post',
             url: `${REACT_APP_SERVER_IP}/register`,
-            data: {newData}
+            data: newData
         })
         promise.then((res) => {
             setStage(true)
-        }).catch(e => console.log(e))
+        }).catch(e => console.log(e.text))
     }
 
     if(stage) {
